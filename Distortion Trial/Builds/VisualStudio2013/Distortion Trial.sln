@@ -1,0 +1,19 @@
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2013
+Project("{5A50B29F-3418-3F4D-C330-D347C040E42C}") = "Distortion Trial", "Distortion Trial.vcxproj", "{0972F153-5CFE-0826-321E-6779857467B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0972F153-5CFE-0826-321E-6779857467B1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0972F153-5CFE-0826-321E-6779857467B1}.Debug|Win32.Build.0 = Debug|Win32
+		{0972F153-5CFE-0826-321E-6779857467B1}.Release|Win32.ActiveCfg = Release|Win32
+		{0972F153-5CFE-0826-321E-6779857467B1}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
