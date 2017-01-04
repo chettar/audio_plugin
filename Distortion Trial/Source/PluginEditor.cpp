@@ -49,17 +49,55 @@ public:
 	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterSlider)
 };
 
+class SliderLook : public LookAndFeel_V3
+{
+public:
+	SliderLook()
+	{
+		setColour(Slider::textBoxBackgroundColourId, Colours::red);
+	}
+	void drawLinearSliderBackground(Graphics &g, int x, int y, int width, int height, float sliderPos,
+		float minSliderPos, float maxSliderPos, const Slider::SliderStyle style, Slider &slider) override
+	{
+		const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
+
+		const Colour trackColour (slider.findColour (Slider::trackColourId));
+		const Colour gradCol1 (trackColour.overlaidWith (Colour (slider.isEnabled() ? 0x13000000 : 0x09000000)));
+		const Colour gradCol2 (trackColour.overlaidWith (Colour (0x06000000)));
+		Path indent;
+
+		if (slider.isHorizontal())
+		{
+			const float iy = y + height * 0.5f - sliderRadius * 0.5f;
+
+			g.setGradientFill (ColourGradient (gradCol1, 0.0f, iy,
+											   gradCol2, 0.0f, iy + sliderRadius, false));
+
+			indent.addRoundedRectangle (x - sliderRadius * 0.5f, iy, width + sliderRadius, sliderRadius, 5.0f);
+		}
+
+		g.fillPath (indent);
+
+		g.setColour (trackColour.contrasting (0.5f));
+		g.strokePath (indent, PathStrokeType (0.5f));
+	}
+};
+
+
+
 //==============================================================================
 DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-
 	// add some sliders..
+	SliderLook* sliderLook = new SliderLook();
 	addAndMakeVisible(slider1 = new ParameterSlider(*p.slider1param));
 	slider1->setSliderStyle(Slider::LinearHorizontal);
 
 	addAndMakeVisible(slider2 = new ParameterSlider(*p.slider2param));
 	slider2->setSliderStyle(Slider::LinearHorizontal);
+	slider2->setSize(20, 300);
+	slider2->setLookAndFeel(sliderLook);
 
 	// add some labels for the sliders..
 	slider1Label.attachToComponent(slider1, false);
@@ -102,3 +140,5 @@ void DistortionTrialAudioProcessorEditor::resized()
 	slider2->setBounds(sliderArea.removeFromLeft(jmin(180, sliderArea.getWidth())));
 
 }
+
+

@@ -30,6 +30,7 @@ public:
 
 private:
 	class ParameterSlider;
+
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DistortionTrialAudioProcessor& processor;
@@ -38,6 +39,8 @@ private:
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionTrialAudioProcessorEditor)
 };
+
+
 
 
 #endif  // PLUGINEDITOR_H_INCLUDED
