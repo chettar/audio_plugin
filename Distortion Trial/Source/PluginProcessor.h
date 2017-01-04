@@ -24,6 +24,10 @@ public:
     DistortionTrialAudioProcessor();
     ~DistortionTrialAudioProcessor();
 
+	// Our parameters
+	AudioParameterFloat* slider1param;
+	AudioParameterFloat* slider2param;
+
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
