@@ -1,3 +1,7 @@
 */Builds/*
 *.jucer
 Distortion Trial/Distortion Trial.jucer
+*JUCE/*
+*Builds/*
+*MacOSX*
+*/JuceLibraryCode/*
