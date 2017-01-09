@@ -146,8 +146,11 @@ void DistortionTrialAudioProcessor::processBlock (AudioSampleBuffer& buffer, Mid
     // audio processing...
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
-        float* channelData = buffer.getWritePointer (channel);
-
+		const float* inBuffer = buffer.getReadPointer(channel);
+        float* outBuffer = buffer.getWritePointer(channel);
+		for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
+			outBuffer[sample] = inBuffer[sample];
+		}
         // ..do something to the data...
     }
 }
