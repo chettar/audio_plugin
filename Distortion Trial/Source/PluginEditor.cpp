@@ -11,6 +11,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
+
 //==============================================================================
 // This is a handy slider subclass that controls an AudioProcessorParameter
 // (may move this class into the library itself at some point in the future..)
@@ -123,7 +124,7 @@ public:
 			g.fillPath(p, AffineTransform::rotation(angle).translated(centreX, centreY));
 		}
 	}
-	
+	/*
 	Slider::SliderLayout getSliderLayout(Slider&amp) override
 	{
 		Slider::SliderLayout layout;
@@ -132,11 +133,10 @@ public:
 		layout.sliderBounds = Rectangle<int> (0, 0, 100, 100);
 
 		return layout;
-	}
+	}*/
 
 	
 	/*
-
 	void drawLinearSliderBackground(Graphics &g, int x, int y, int width, int height, float sliderPos,
 		float minSliderPos, float maxSliderPos, const Slider::SliderStyle style, Slider &slider) override
 	{
@@ -170,6 +170,7 @@ public:
 DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
+
 	// add some sliders..
 	SliderLook* sliderLook = new SliderLook();
 
@@ -190,7 +191,9 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-	setSize(1000, 600);
+	setSize(500, 300);
+	//setResizable(true, true);
+	//setUsingNativeTitleBar(true);
     
     // Add listener for sliders
     slider1->addListener(this);
@@ -205,34 +208,61 @@ void DistortionTrialAudioProcessorEditor::paint (Graphics& g)
 {
     g.fillAll (Colours::white);
 
-    g.setColour (Colours::black);
-    g.setFont (15.0f);
-    g.drawFittedText ("Distortion Trial", getLocalBounds(), Justification::centred, 1);
+    //g.setColour (Colours::black);
+    //g.setFont (15.0f);
+    //g.drawFittedText ("Distortion Trial", getLocalBounds(), Justification::centred, 1);
 
 	g.setColour(Colours::deepskyblue);
-	g.fillRect(10, 10, 980, 275);
+	g.fillRect(header);
+
+	g.setColour(Colours::yellow);
+	g.fillRect(footer);
+
+	g.setColour(Colours::lightpink);
+	g.fillRect(sliderLeftCol);
+
+	g.setColour(Colours::blue);
+	g.fillRect(sliderRightCol);
+
+	g.setColour(Colours::dimgrey);
+	g.fillRect(visualizerBox);
+
+	
 }
 
 void DistortionTrialAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+	// This is generally where you'll want to lay out the positions of any
+	// subcomponents in your editor..
 
 	// This lays out our child components...
 
-	Rectangle<int> r(getLocalBounds().reduced(8));
 
-	r.removeFromTop(30);
-	Rectangle<int> sliderArea(r.removeFromTop(50));
-	slider1->setBounds(150, 350, 175, 175);
-	slider2->setBounds(150, 475, 175, 175);
-	slider1Label.setBounds(190, 160, 10, 30);
-	slider2Label.setBounds(150, 260, 10, 30);
-    slider1->setRange(0.f, 127.f);
-    slider2->setRange(0.f, 127.f);
-    //slider1->setBounds(sliderArea.removeFromLeft(jmin(180, sliderArea.getWidth() / 2)));
-	//slider2->setBounds(sliderArea.removeFromLeft(jmin(180, sliderArea.getWidth())));
 
+	Rectangle<int> totalArea(getLocalBounds());
+
+	const int headerFooterHeight = 36;
+	header = Rectangle<int>(totalArea.removeFromTop(headerFooterHeight));
+	footer = Rectangle<int>(totalArea.removeFromBottom(headerFooterHeight));
+
+	const int margin = 5;
+	const int boxMin = 100;
+	//Slider box and visualizer width is always half of total area
+	sliderBox = Rectangle<int>(totalArea.removeFromLeft(totalArea.getWidth() / 2).reduced(margin));
+	visualizerBox = Rectangle<int>(totalArea.removeFromRight(totalArea.getWidth()).reduced(margin));
+	//sliderBox = Rectangle<int>(totalArea.removeFromLeft(jmax(boxMin, (totalArea.getWidth() / 2))).reduced(margin));
+	//visualizerBox = Rectangle<int>(totalArea.removeFromRight(jmax(boxMin, (totalArea.getWidth() / 2))).reduced(margin));
+
+	sliderLeftCol = Rectangle<int>(sliderBox.removeFromLeft(sliderBox.getWidth() / 2));
+	sliderRightCol = Rectangle<int>(sliderBox.removeFromRight(sliderBox.getWidth()));
+
+	slider1->setBounds(sliderLeftCol.removeFromTop(sliderLeftCol.getHeight() / 2).reduced(10));
+	slider2->setBounds(sliderRightCol.removeFromTop(sliderRightCol.getHeight() / 2).reduced(10));
+
+	/* commented so I don't blow my speakers
+	slider1->setRange(0.f, 127.f); 
+	slider2->setRange(0.f, 127.f);
+	*/
 }
 
 void DistortionTrialAudioProcessorEditor::sliderValueChanged(Slider* slider)
