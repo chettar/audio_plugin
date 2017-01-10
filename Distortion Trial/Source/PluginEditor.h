@@ -18,7 +18,8 @@
 //==============================================================================
 /**
 */
-class DistortionTrialAudioProcessorEditor  : public AudioProcessorEditor
+class DistortionTrialAudioProcessorEditor  : public AudioProcessorEditor,
+                                             private Slider::Listener
 {
 public:
     DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor&);
@@ -27,10 +28,10 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-
+    void sliderValueChanged(Slider* slider) override;
+    
 private:
 	class ParameterSlider;
-
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DistortionTrialAudioProcessor& processor;

@@ -27,7 +27,10 @@ public:
 	// Our parameters
 	AudioParameterFloat* slider1param;
 	AudioParameterFloat* slider2param;
-
+    
+    // Values for user changeable params (named by control)
+    float gain_;
+    std::bitset<1> distortionType_;
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;

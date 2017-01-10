@@ -141,17 +141,35 @@ void DistortionTrialAudioProcessor::processBlock (AudioSampleBuffer& buffer, Mid
     // this code if your algorithm always overwrites all the output channels.
     for (int i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
-
+    
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
+    
+    float inputGain;
+    inputGain = powf(10.0f, gain_/20.0f);
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
 		const float* inBuffer = buffer.getReadPointer(channel);
         float* outBuffer = buffer.getWritePointer(channel);
+        
+        // Apply distortion to each sample in buffer
 		for (int sample = 0; sample < buffer.getNumSamples(); ++sample) {
-			outBuffer[sample] = inBuffer[sample];
+            const float input = inBuffer[sample]*inputGain;
+            float output;
+            if(!distortionType_[0]) {
+                float threshold = 1.0f;
+                if(input > threshold) {
+                    output = threshold;
+                }
+                else if(input < -threshold) {
+                    output = -threshold;
+                }
+                else {
+                    output = input;
+                }
+            }
+            outBuffer[sample] = output;
 		}
-        // ..do something to the data...
     }
 }
 

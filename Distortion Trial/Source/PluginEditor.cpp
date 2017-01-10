@@ -191,6 +191,9 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 	setSize(1000, 600);
+    
+    // Add listener for sliders
+    slider1->addListener(this);
 }
 
 DistortionTrialAudioProcessorEditor::~DistortionTrialAudioProcessorEditor()
@@ -225,9 +228,17 @@ void DistortionTrialAudioProcessorEditor::resized()
 	slider2->setBounds(150, 475, 175, 175);
 	slider1Label.setBounds(190, 160, 10, 30);
 	slider2Label.setBounds(150, 260, 10, 30);
-	//slider1->setBounds(sliderArea.removeFromLeft(jmin(180, sliderArea.getWidth() / 2)));
+    slider1->setRange(0.f, 127.f);
+    slider2->setRange(0.f, 127.f);
+    //slider1->setBounds(sliderArea.removeFromLeft(jmin(180, sliderArea.getWidth() / 2)));
 	//slider2->setBounds(sliderArea.removeFromLeft(jmin(180, sliderArea.getWidth())));
 
+}
+
+void DistortionTrialAudioProcessorEditor::sliderValueChanged(Slider* slider)
+{
+    processor.gain_ = slider1->getValue();
+    std::cout << processor.gain_ << std::endl;
 }
 
 
