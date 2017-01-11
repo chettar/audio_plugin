@@ -32,9 +32,10 @@ DistortionTrialAudioProcessor::DistortionTrialAudioProcessor()
     
     parameters.createAndAddParameter("inputGain", "Input Gain", "dB", NormalisableRange<float> (-36.f,36.f), 0.f, nullptr, nullptr);
     parameters.createAndAddParameter("outputGain", "Output Gain", "dB", NormalisableRange<float> (-36.f,36.f), 0.f, nullptr, nullptr);
+    parameters.createAndAddParameter("dryWet", "Dry/Wet", "%", NormalisableRange<float> (0.f,100.f), 100.f, nullptr, nullptr);
+    parameters.createAndAddParameter("frequency", "Frequency", "Hz", NormalisableRange<float> (20.f,20000.f), 1000.f, nullptr, nullptr);
+    parameters.createAndAddParameter("autoFrequency", "Auto Frequency", "Hz", NormalisableRange<float> (0.f, 1.f, 1.f), 1.f, nullptr, nullptr);
     parameters.state = ValueTree (Identifier ("Tonal Conflict"));
-	//addParameter(slider1param = new AudioParameterFloat("slider1", "First slider", 0.0f, 1.0f, 0.9f));
-	//addParameter(slider2param = new AudioParameterFloat("slider2", "Second Slider", 0.0f, 1.0f, 0.5f));
 }
 
 DistortionTrialAudioProcessor::~DistortionTrialAudioProcessor()

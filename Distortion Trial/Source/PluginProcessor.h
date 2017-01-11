@@ -24,13 +24,8 @@ public:
     //==============================================================================
     DistortionTrialAudioProcessor();
     ~DistortionTrialAudioProcessor();
-
-	// Our parameters
-	//AudioParameterFloat* slider1param;
-	//AudioParameterFloat* slider2param;
     
     // Values for user changeable params (named by control)
-    float gain_;
     std::bitset<1> distortionType_;
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -68,6 +63,7 @@ private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionTrialAudioProcessor)
     
+    // Value Tree to store all params
     AudioProcessorValueTreeState parameters;
 };
 

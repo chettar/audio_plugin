@@ -379,6 +379,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Source\CustomSliderLookAndFeel.cpp">
+      <Filter>Distortion Trial\Source</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp">
       <Filter>Distortion Trial\Source</Filter>
     </ClCompile>

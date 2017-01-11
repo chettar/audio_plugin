@@ -12,6 +12,8 @@
               jucerVersion="4.3.0">
   <MAINGROUP id="OCDeM7" name="Distortion Trial">
     <GROUP id="{85AE972F-04A5-7D8D-BE06-1970DAF965E0}" name="Source">
+      <FILE id="U8iyrS" name="CustomSliderLookAndFeel.cpp" compile="1" resource="0"
+            file="Source/CustomSliderLookAndFeel.cpp"/>
       <FILE id="uvY6gG" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="jOyuuU" name="PluginProcessor.h" compile="0" resource="0"

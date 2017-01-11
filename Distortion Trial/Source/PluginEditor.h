@@ -19,9 +19,9 @@
 /**
 */
 typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 
-class DistortionTrialAudioProcessorEditor  : public AudioProcessorEditor,
-                                             private Slider::Listener
+class DistortionTrialAudioProcessorEditor  : public AudioProcessorEditor
 {
 public:
     DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor&,AudioProcessorValueTreeState&);
@@ -30,18 +30,20 @@ public:
     //==============================================================================
     void paint (Graphics&) override;
     void resized() override;
-    void sliderValueChanged(Slider* slider) override;
 	//void initialise() override;
     
 private:
-	class ParameterSlider;
+	//class ParameterSlider;
     AudioProcessorValueTreeState& valueTreeState;
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DistortionTrialAudioProcessor& processor;
-	Label timecodeDisplayLabel, slider1Label, slider2Label;
-	ScopedPointer<SliderAttachment> slider1attachment, slider2attachment;
-    Slider slider1, slider2;
+	Label timecodeDisplayLabel, inputGainLabel, outputGainLabel, dryWetLabel, frequencyLabel;
+	ScopedPointer<SliderAttachment> inputGainAttachment, outputGainAttachment, dryWetAttachment,
+                                    frequencyAttachment;
+    ScopedPointer<ButtonAttachment> autoFrequencyAttachment;
+    Slider inputGainSlider, outputGainSlider, dryWetSlider, frequencySlider;
+    ToggleButton autoFrequencyButton;
 	Rectangle<int> header, footer, sliderBox, visualizerBox, sliderLeftCol, sliderRightCol;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionTrialAudioProcessorEditor)

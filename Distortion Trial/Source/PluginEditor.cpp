@@ -10,147 +10,7 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
-
-
-//==============================================================================
-// This is a handy slider subclass that controls an AudioProcessorParameter
-// (may move this class into the library itself at some point in the future..)
-class DistortionTrialAudioProcessorEditor::ParameterSlider : public Slider
-{
-public:
-	ParameterSlider(AudioProcessorParameter& audioParam) : Slider(audioParam.getName(256)), param(audioParam) {
-		setRange(0.0, 1.0, 0.0);
-		updateSliderPos();
-	}
-
-	void valueChanged() override
-	{
-		if (isMouseButtonDown())
-			param.setValueNotifyingHost((float)Slider::getValue());
-		else
-			param.setValue((float)Slider::getValue());
-	}
-
-	void startedDragging() override { param.beginChangeGesture(); }
-	void stoppedDragging() override { param.endChangeGesture(); }
-
-	double getValueFromText(const String& text) override { return param.getValueForText(text); }
-	String getTextFromValue(double value) override { return param.getText((float)value, 1024); }
-
-	void updateSliderPos()
-	{
-		const float newValue = param.getValue();
-
-		if (newValue != (float)Slider::getValue() && !isMouseButtonDown())
-			Slider::setValue(newValue);
-	}
-
-	AudioProcessorParameter& param;
-
-	JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(ParameterSlider)
-};
-
-class SliderLook : public LookAndFeel_V3
-{
-public:
-	SliderLook()
-	{
-		//setColour(Slider::textBoxBackgroundColourId, Colours::red);
-	}
-	
-	void drawRotarySlider(Graphics& g, int x, int y, int width, int height, float sliderPos,
-		const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
-	{
-		const float radius = jmin(width / 2, height / 2) - 2.0f;
-		const float centreX = x + width * 0.5f;
-		const float centreY = y + height * 0.5f;
-		const float rx = centreX - radius;
-		const float ry = centreY - radius;
-		const float rw = radius * 2.0f;
-		const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
-		const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
-
-		if (radius > 12.0f)
-		{
-			const float thickness = 0.7f;
-			const float insideThickness = 0.96f;
-
-			if (slider.isEnabled())
-				g.setColour(slider.findColour(Slider::rotarySliderFillColourId).withAlpha(isMouseOver ? 1.0f : 0.9f));
-			else
-				g.setColour(Colour(0x80808080));
-
-
-			{
-				Path filledArc;
-				filledArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, angle, thickness);
-				g.fillPath(filledArc);
-			}
-			/*
-			{
-				const float innerRadius = radius * 0.2f;
-				Path p;
-				p.addTriangle(-innerRadius, 0.0f,
-					0.0f, -radius * thickness * 1.1f,
-					innerRadius, 0.0f);
-
-				p.addEllipse(-innerRadius, -innerRadius, innerRadius * 2.0f, innerRadius * 2.0f);
-
-				g.fillPath(p, AffineTransform::rotation(angle).translated(centreX, centreY));
-			}*/
-
-			if (slider.isEnabled())
-				g.setColour(slider.findColour(Slider::rotarySliderOutlineColourId));
-			else
-				g.setColour(Colour(0x80808080));
-			/*
-			Path outlineArc;
-			outlineArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
-			outlineArc.closeSubPath();
-			g.strokePath(outlineArc, PathStrokeType(slider.isEnabled() ? (isMouseOver ? 2.0f : 1.2f) : 0.3f));
-			*/
-
-			g.setColour(Colours::grey);
-			Path insideArc;
-			insideArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, insideThickness);
-			g.fillPath(insideArc);
-
-			
-			//insideArc.closeSubPath();
-
-			
-
-
-		}
-		else
-		{
-			if (slider.isEnabled())
-				g.setColour(slider.findColour(Slider::rotarySliderFillColourId).withAlpha(isMouseOver ? 1.0f : 0.7f));
-			else
-				g.setColour(Colour(0x80808080));
-
-			Path p;
-			p.addEllipse(-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
-			PathStrokeType(rw * 0.1f).createStrokedPath(p, p);
-
-			p.addLineSegment(Line<float>(0.0f, 0.0f, 0.0f, -radius), rw * 0.2f);
-
-			g.fillPath(p, AffineTransform::rotation(angle).translated(centreX, centreY));
-		}
-	}
-	/*
-	Slider::SliderLayout getSliderLayout(Slider&amp) override
-	{
-		Slider::SliderLayout layout;
-
-		layout.textBoxBounds = Rectangle<int>(15, 35, 70, 20);
-		layout.sliderBounds = Rectangle<int> (0, 0, 100, 100);
-
-		return layout;
-	}*/
-};
-
-
+#include "CustomSliderLookAndFeel.cpp"
 
 //==============================================================================
 DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor& p, AudioProcessorValueTreeState& vts)
@@ -160,32 +20,47 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 	// add some sliders..
 	SliderLook* sliderLook = new SliderLook();
 
-	//addAndMakeVisible(slider1 = new ParameterSlider(*p.slider1param));
-	slider1.setSliderStyle(Slider::Rotary);
-	//slider1.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-	slider1.setLookAndFeel(sliderLook);
+	//addAndMakeVisible(inputGainSlider = new ParameterSlider(*p.inputGainSliderparam));
+	inputGainSlider.setSliderStyle(Slider::Rotary);
+	//inputGainSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+	inputGainSlider.setLookAndFeel(sliderLook);
 
 	//addAndMakeVisible(slider2 = new ParameterSlider(*p.slider2param));
-	slider2.setSliderStyle(Slider::Rotary);
+	outputGainSlider.setSliderStyle(Slider::Rotary);
 	//slider2.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-	slider2.setLookAndFeel(sliderLook);
+	outputGainSlider.setLookAndFeel(sliderLook);
+    
+    dryWetSlider.setSliderStyle(Slider::Rotary);
+    dryWetSlider.setLookAndFeel(sliderLook);
+    
+    frequencySlider.setSliderStyle(Slider::Rotary);
+    frequencySlider.setLookAndFeel(sliderLook);
 
 	// add some labels for the sliders..
 	//slider1Label.attachToComponent(slider1, false);
-	slider1Label.setFont(Font(11.0f));
+	inputGainLabel.setFont(Font(11.0f));
 
 	//slider2Label.attachToComponent(slider2, false);
-	slider2Label.setFont(Font(11.0f));
+	outputGainLabel.setFont(Font(11.0f));
     
-    addAndMakeVisible(slider1Label);
-    addAndMakeVisible(slider2Label);
-    addAndMakeVisible(slider1);
-    addAndMakeVisible(slider2);
-
-    slider1attachment = new SliderAttachment(valueTreeState, "inputGain", slider1);
-    slider2attachment = new SliderAttachment(valueTreeState, "outputGain", slider2);
-
+    dryWetLabel.setFont(Font(11.0f));
+    frequencyLabel.setFont(Font(11.0f));
     
+    addAndMakeVisible(inputGainLabel);
+    addAndMakeVisible(outputGainLabel);
+    addAndMakeVisible(inputGainSlider);
+    addAndMakeVisible(outputGainSlider);
+    addAndMakeVisible(dryWetLabel);
+    addAndMakeVisible(dryWetSlider);
+    addAndMakeVisible(frequencyLabel);
+    addAndMakeVisible(frequencySlider);
+    addAndMakeVisible(autoFrequencyButton);
+
+    inputGainAttachment = new SliderAttachment(valueTreeState, "inputGain", inputGainSlider);
+    outputGainAttachment = new SliderAttachment(valueTreeState, "outputGain", outputGainSlider);
+    dryWetAttachment = new SliderAttachment(valueTreeState, "dryWet", dryWetSlider);
+    frequencyAttachment = new SliderAttachment(valueTreeState, "frequency", frequencySlider);
+    autoFrequencyAttachment = new ButtonAttachment(valueTreeState, "autoFrequency", autoFrequencyButton);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 	setSize(1000, 600);
@@ -259,11 +134,13 @@ void DistortionTrialAudioProcessorEditor::resized()
 	sliderLeftCol = Rectangle<int>(sliderBox.removeFromLeft(sliderBox.getWidth() / 2));
 	sliderRightCol = Rectangle<int>(sliderBox.removeFromRight(sliderBox.getWidth()));
 
-	slider1.setBounds(sliderLeftCol.removeFromTop(sliderLeftCol.getHeight() / 2).reduced(10));
-	slider2.setBounds(sliderRightCol.removeFromTop(sliderRightCol.getHeight() / 2).reduced(10));
-
+	inputGainSlider.setBounds(sliderLeftCol.removeFromTop(sliderLeftCol.getHeight() / 2).reduced(10));
+	outputGainSlider.setBounds(sliderRightCol.removeFromTop(sliderRightCol.getHeight() / 2).reduced(10));
+    dryWetSlider.setBounds(sliderLeftCol.removeFromBottom(sliderLeftCol.getHeight()).reduced(10));
+    frequencySlider.setBounds(sliderRightCol.removeFromBottom(sliderRightCol.getHeight()).reduced(10));
+    autoFrequencyButton.setBounds(footer);
 	/* commented so I don't blow my speakers
-	slider1->setRange(0.f, 127.f); 
+	inputGainSlider->setRange(0.f, 127.f); 
 	slider2->setRange(0.f, 127.f);
 	*/
 
@@ -273,11 +150,3 @@ void DistortionTrialAudioProcessorEditor::resized()
 	getProcessor()->lastUIHeight = getHeight();
 	*/
 }
-
-void DistortionTrialAudioProcessorEditor::sliderValueChanged(Slider* slider)
-{
-    processor.gain_ = slider1.getValue();
-    std::cout << processor.gain_ << std::endl;
-}
-
-
