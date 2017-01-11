@@ -18,11 +18,13 @@
 //==============================================================================
 /**
 */
+typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
+
 class DistortionTrialAudioProcessorEditor  : public AudioProcessorEditor,
                                              private Slider::Listener
 {
 public:
-    DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor&);
+    DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor&,AudioProcessorValueTreeState&);
     ~DistortionTrialAudioProcessorEditor();
 
     //==============================================================================
@@ -33,11 +35,13 @@ public:
     
 private:
 	class ParameterSlider;
+    AudioProcessorValueTreeState& valueTreeState;
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DistortionTrialAudioProcessor& processor;
 	Label timecodeDisplayLabel, slider1Label, slider2Label;
-	ScopedPointer<ParameterSlider> slider1, slider2;
+	ScopedPointer<SliderAttachment> slider1attachment, slider2attachment;
+    Slider slider1, slider2;
 	Rectangle<int> header, footer, sliderBox, visualizerBox, sliderLeftCol, sliderRightCol;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionTrialAudioProcessorEditor)

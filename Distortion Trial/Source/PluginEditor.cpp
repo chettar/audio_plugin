@@ -153,22 +153,22 @@ public:
 
 
 //==============================================================================
-DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
+DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (DistortionTrialAudioProcessor& p, AudioProcessorValueTreeState& vts)
+    : AudioProcessorEditor (&p), valueTreeState(vts), processor (p)
 {
 
 	// add some sliders..
 	SliderLook* sliderLook = new SliderLook();
 
-	addAndMakeVisible(slider1 = new ParameterSlider(*p.slider1param));
-	slider1->setSliderStyle(Slider::Rotary);
-	slider1->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-	slider1->setLookAndFeel(sliderLook);
+	//addAndMakeVisible(slider1 = new ParameterSlider(*p.slider1param));
+	slider1.setSliderStyle(Slider::Rotary);
+	//slider1.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+	slider1.setLookAndFeel(sliderLook);
 
-	addAndMakeVisible(slider2 = new ParameterSlider(*p.slider2param));
-	slider2->setSliderStyle(Slider::Rotary);
-	slider2->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-	slider2->setLookAndFeel(sliderLook);
+	//addAndMakeVisible(slider2 = new ParameterSlider(*p.slider2param));
+	slider2.setSliderStyle(Slider::Rotary);
+	//slider2.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
+	slider2.setLookAndFeel(sliderLook);
 
 	// add some labels for the sliders..
 	//slider1Label.attachToComponent(slider1, false);
@@ -176,13 +176,22 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 
 	//slider2Label.attachToComponent(slider2, false);
 	slider2Label.setFont(Font(11.0f));
+    
+    addAndMakeVisible(slider1Label);
+    addAndMakeVisible(slider2Label);
+    addAndMakeVisible(slider1);
+    addAndMakeVisible(slider2);
 
+    slider1attachment = new SliderAttachment(valueTreeState, "inputGain", slider1);
+    slider2attachment = new SliderAttachment(valueTreeState, "outputGain", slider2);
+
+    
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 	setSize(1000, 600);
     
     // Add listener for sliders
-    slider1->addListener(this);
+    //slider1->addListener(this);
 
 	//Code to resize window - https://forum.juce.com/t/best-way-to-implement-resizable-plugin/12644/3
 	/*May implement in future
@@ -250,8 +259,8 @@ void DistortionTrialAudioProcessorEditor::resized()
 	sliderLeftCol = Rectangle<int>(sliderBox.removeFromLeft(sliderBox.getWidth() / 2));
 	sliderRightCol = Rectangle<int>(sliderBox.removeFromRight(sliderBox.getWidth()));
 
-	slider1->setBounds(sliderLeftCol.removeFromTop(sliderLeftCol.getHeight() / 2).reduced(10));
-	slider2->setBounds(sliderRightCol.removeFromTop(sliderRightCol.getHeight() / 2).reduced(10));
+	slider1.setBounds(sliderLeftCol.removeFromTop(sliderLeftCol.getHeight() / 2).reduced(10));
+	slider2.setBounds(sliderRightCol.removeFromTop(sliderRightCol.getHeight() / 2).reduced(10));
 
 	/* commented so I don't blow my speakers
 	slider1->setRange(0.f, 127.f); 
@@ -267,7 +276,7 @@ void DistortionTrialAudioProcessorEditor::resized()
 
 void DistortionTrialAudioProcessorEditor::sliderValueChanged(Slider* slider)
 {
-    processor.gain_ = slider1->getValue();
+    processor.gain_ = slider1.getValue();
     std::cout << processor.gain_ << std::endl;
 }
 

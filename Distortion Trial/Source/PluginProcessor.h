@@ -26,8 +26,8 @@ public:
     ~DistortionTrialAudioProcessor();
 
 	// Our parameters
-	AudioParameterFloat* slider1param;
-	AudioParameterFloat* slider2param;
+	//AudioParameterFloat* slider1param;
+	//AudioParameterFloat* slider2param;
     
     // Values for user changeable params (named by control)
     float gain_;
@@ -67,6 +67,8 @@ public:
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionTrialAudioProcessor)
+    
+    AudioProcessorValueTreeState parameters;
 };
 
 

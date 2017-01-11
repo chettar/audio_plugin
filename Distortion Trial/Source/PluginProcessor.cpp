@@ -23,15 +23,18 @@ DistortionTrialAudioProcessor::DistortionTrialAudioProcessor()
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
                        ),
-	slider1param(nullptr),
-	slider2param(nullptr)
 #endif
+    parameters(*this, nullptr)
 {
 	// This creates our parameters. We'll keep some raw pointers to them in this class,
 	// so that we can easily access them later, but the base class will take care of
 	// deleting them for us.
-	addParameter(slider1param = new AudioParameterFloat("slider1", "First slider", 0.0f, 1.0f, 0.9f));
-	addParameter(slider2param = new AudioParameterFloat("slider2", "Second Slider", 0.0f, 1.0f, 0.5f));
+    
+    parameters.createAndAddParameter("inputGain", "Input Gain", "dB", NormalisableRange<float> (-36.f,36.f), 0.f, nullptr, nullptr);
+    parameters.createAndAddParameter("outputGain", "Output Gain", "dB", NormalisableRange<float> (-36.f,36.f), 0.f, nullptr, nullptr);
+    parameters.state = ValueTree (Identifier ("Tonal Conflict"));
+	//addParameter(slider1param = new AudioParameterFloat("slider1", "First slider", 0.0f, 1.0f, 0.9f));
+	//addParameter(slider2param = new AudioParameterFloat("slider2", "Second Slider", 0.0f, 1.0f, 0.5f));
 }
 
 DistortionTrialAudioProcessor::~DistortionTrialAudioProcessor()
@@ -146,7 +149,7 @@ void DistortionTrialAudioProcessor::processBlock (AudioSampleBuffer& buffer, Mid
     // audio processing...
     
     float inputGain;
-    inputGain = powf(10.0f, gain_/20.0f);
+    inputGain = powf(10.0f, *parameters.getRawParameterValue("inputGain")/20.0f);
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
 		const float* inBuffer = buffer.getReadPointer(channel);
@@ -181,7 +184,7 @@ bool DistortionTrialAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* DistortionTrialAudioProcessor::createEditor()
 {
-    return new DistortionTrialAudioProcessorEditor (*this);
+    return new DistortionTrialAudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================
