@@ -29,7 +29,7 @@ public:
     void paint (Graphics&) override;
     void resized() override;
     void sliderValueChanged(Slider* slider) override;
-	void initialise() override;
+	//void initialise() override;
     
 private:
 	class ParameterSlider;

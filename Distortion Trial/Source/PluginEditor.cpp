@@ -72,12 +72,14 @@ public:
 
 		if (radius > 12.0f)
 		{
+			const float thickness = 0.7f;
+			const float insideThickness = 0.96f;
+
 			if (slider.isEnabled())
-				g.setColour(slider.findColour(Slider::rotarySliderFillColourId).withAlpha(isMouseOver ? 1.0f : 0.7f));
+				g.setColour(slider.findColour(Slider::rotarySliderFillColourId).withAlpha(isMouseOver ? 1.0f : 0.9f));
 			else
 				g.setColour(Colour(0x80808080));
 
-			const float thickness = 0.7f;
 
 			{
 				Path filledArc;
@@ -101,12 +103,24 @@ public:
 				g.setColour(slider.findColour(Slider::rotarySliderOutlineColourId));
 			else
 				g.setColour(Colour(0x80808080));
-
+			/*
 			Path outlineArc;
 			outlineArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
 			outlineArc.closeSubPath();
-
 			g.strokePath(outlineArc, PathStrokeType(slider.isEnabled() ? (isMouseOver ? 2.0f : 1.2f) : 0.3f));
+			*/
+
+			g.setColour(Colours::grey);
+			Path insideArc;
+			insideArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, insideThickness);
+			g.fillPath(insideArc);
+
+			
+			//insideArc.closeSubPath();
+
+			
+
+
 		}
 		else
 		{
@@ -134,34 +148,6 @@ public:
 
 		return layout;
 	}*/
-
-	
-	/*
-	void drawLinearSliderBackground(Graphics &g, int x, int y, int width, int height, float sliderPos,
-		float minSliderPos, float maxSliderPos, const Slider::SliderStyle style, Slider &slider) override
-	{
-		const float sliderRadius = (float) (getSliderThumbRadius (slider) - 2);
-
-		const Colour trackColour (slider.findColour (Slider::trackColourId));
-		const Colour gradCol1 (trackColour.overlaidWith (Colour (slider.isEnabled() ? 0x13000000 : 0x09000000)));
-		const Colour gradCol2 (trackColour.overlaidWith (Colour (0x06000000)));
-		Path indent;
-
-		if (slider.isHorizontal())
-		{
-			const float iy = y + height * 0.5f - sliderRadius * 0.5f;
-
-			g.setGradientFill (ColourGradient (gradCol1, 0.0f, iy,
-											   gradCol2, 0.0f, iy + sliderRadius, false));
-
-			indent.addRoundedRectangle (x - sliderRadius * 0.5f, iy, width + sliderRadius, sliderRadius, 5.0f);
-		}
-
-		g.fillPath (indent);
-
-		g.setColour (trackColour.contrasting (0.5f));
-		g.strokePath (indent, PathStrokeType (0.5f));
-	}*/
 };
 
 
@@ -176,10 +162,12 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 
 	addAndMakeVisible(slider1 = new ParameterSlider(*p.slider1param));
 	slider1->setSliderStyle(Slider::Rotary);
+	slider1->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 	slider1->setLookAndFeel(sliderLook);
 
 	addAndMakeVisible(slider2 = new ParameterSlider(*p.slider2param));
 	slider2->setSliderStyle(Slider::Rotary);
+	slider2->setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 	slider2->setLookAndFeel(sliderLook);
 
 	// add some labels for the sliders..
@@ -191,12 +179,17 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-	setSize(500, 300);
-	//setResizable(true, true);
-	//setUsingNativeTitleBar(true);
+	setSize(1000, 600);
     
     // Add listener for sliders
     slider1->addListener(this);
+
+	//Code to resize window - https://forum.juce.com/t/best-way-to-implement-resizable-plugin/12644/3
+	/*May implement in future
+	addAndMakeVisible(resizer = new ResizableCornerComponent(this, &resizeLimits));
+	resizeLimits.setSizeLimits(150, 150, 800, 300);
+	setSize(ownerFilter->lastUIWidth, ownerFilter->lastUIHeight);
+	*/
 }
 
 DistortionTrialAudioProcessorEditor::~DistortionTrialAudioProcessorEditor()
@@ -206,14 +199,15 @@ DistortionTrialAudioProcessorEditor::~DistortionTrialAudioProcessorEditor()
 //==============================================================================
 void DistortionTrialAudioProcessorEditor::paint (Graphics& g)
 {
-    g.fillAll (Colours::white);
+    g.fillAll (Colours::darkslategrey);
 
     //g.setColour (Colours::black);
     //g.setFont (15.0f);
-    //g.drawFittedText ("Distortion Trial", getLocalBounds(), Justification::centred, 1);
 
 	g.setColour(Colours::deepskyblue);
-	g.fillRect(header);
+	//g.fillRect(header);
+	g.setFont(30.f);
+	g.drawFittedText("Tonal Conflict", header, Justification::left, 1);
 
 	g.setColour(Colours::yellow);
 	g.fillRect(footer);
@@ -224,7 +218,7 @@ void DistortionTrialAudioProcessorEditor::paint (Graphics& g)
 	g.setColour(Colours::blue);
 	g.fillRect(sliderRightCol);
 
-	g.setColour(Colours::dimgrey);
+	g.setColour(Colours::grey);
 	g.fillRect(visualizerBox);
 
 	
@@ -262,6 +256,12 @@ void DistortionTrialAudioProcessorEditor::resized()
 	/* commented so I don't blow my speakers
 	slider1->setRange(0.f, 127.f); 
 	slider2->setRange(0.f, 127.f);
+	*/
+
+	/* more future code for resizable window
+	resizer->setBounds(getWidth() - 16, getHeight() - 16, 16, 16);
+	getProcessor()->lastUIWidth = getWidth();
+	getProcessor()->lastUIHeight = getHeight();
 	*/
 }
 
