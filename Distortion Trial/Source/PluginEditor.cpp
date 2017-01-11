@@ -17,15 +17,22 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
     : AudioProcessorEditor (&p), valueTreeState(vts), processor (p)
 {
 
+	//Combo boxes
+	addAndMakeVisible(distortionType);
+	distortionType.addItem("test1", 1);
+	distortionType.addItem("test2", 2);
+
+	addAndMakeVisible(numOfHarmonics);
+	numOfHarmonics.addItem("One", 1);
+	numOfHarmonics.addItem("Two", 2);
+
 	// add some sliders..
 	SliderLook* sliderLook = new SliderLook();
 
-	//addAndMakeVisible(inputGainSlider = new ParameterSlider(*p.inputGainSliderparam));
 	inputGainSlider.setSliderStyle(Slider::Rotary);
 	//inputGainSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 	inputGainSlider.setLookAndFeel(sliderLook);
 
-	//addAndMakeVisible(slider2 = new ParameterSlider(*p.slider2param));
 	outputGainSlider.setSliderStyle(Slider::Rotary);
 	//slider2.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
 	outputGainSlider.setLookAndFeel(sliderLook);
@@ -37,10 +44,7 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
     frequencySlider.setLookAndFeel(sliderLook);
 
 	// add some labels for the sliders..
-	//slider1Label.attachToComponent(slider1, false);
 	inputGainLabel.setFont(Font(11.0f));
-
-	//slider2Label.attachToComponent(slider2, false);
 	outputGainLabel.setFont(Font(11.0f));
     
     dryWetLabel.setFont(Font(11.0f));
@@ -131,6 +135,9 @@ void DistortionTrialAudioProcessorEditor::resized()
 	//sliderBox = Rectangle<int>(totalArea.removeFromLeft(jmax(boxMin, (totalArea.getWidth() / 2))).reduced(margin));
 	//visualizerBox = Rectangle<int>(totalArea.removeFromRight(jmax(boxMin, (totalArea.getWidth() / 2))).reduced(margin));
 
+	distortionTypeBox = Rectangle<int>(sliderBox.removeFromTop(sliderBox.getHeight() / 10).reduced(10));
+	harmonicsBox = Rectangle<int>(distortionTypeBox.removeFromRight(distortionTypeBox.getWidth() / 2));
+
 	sliderLeftCol = Rectangle<int>(sliderBox.removeFromLeft(sliderBox.getWidth() / 2));
 	sliderRightCol = Rectangle<int>(sliderBox.removeFromRight(sliderBox.getWidth()));
 
@@ -139,6 +146,8 @@ void DistortionTrialAudioProcessorEditor::resized()
     dryWetSlider.setBounds(sliderLeftCol.removeFromBottom(sliderLeftCol.getHeight()).reduced(10));
     frequencySlider.setBounds(sliderRightCol.removeFromBottom(sliderRightCol.getHeight()).reduced(10));
     autoFrequencyButton.setBounds(footer);
+	distortionType.setBounds(distortionTypeBox);
+	numOfHarmonics.setBounds(harmonicsBox);
 	/* commented so I don't blow my speakers
 	inputGainSlider->setRange(0.f, 127.f); 
 	slider2->setRange(0.f, 127.f);
