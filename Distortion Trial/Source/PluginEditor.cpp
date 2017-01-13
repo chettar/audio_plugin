@@ -45,8 +45,7 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 
 	// add some labels for the sliders..
 	inputGainLabel.setFont(Font(11.0f));
-	outputGainLabel.setFont(Font(11.0f));
-    
+	outputGainLabel.setFont(Font(11.0f));  
     dryWetLabel.setFont(Font(11.0f));
     frequencyLabel.setFont(Font(11.0f));
     
@@ -67,7 +66,10 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
     autoFrequencyAttachment = new ButtonAttachment(valueTreeState, "autoFrequency", autoFrequencyButton);
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-	setSize(1000, 600);
+	Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
+	int x = r.getWidth() / 4;
+	int y = r.getHeight() / 4;
+	setSize(x, y);
     
     // Add listener for sliders
     //slider1->addListener(this);
@@ -84,6 +86,16 @@ DistortionTrialAudioProcessorEditor::~DistortionTrialAudioProcessorEditor()
 {
 }
 
+void drawTextToFillRectangle(Graphics &g, const Font& font, const String& text, Rectangle<int> container) {
+	float currentHeight = font.getHeight();
+	float currentWidth = font.getStringWidthFloat(text);
+	float scale = jmin(container.getHeight() / currentHeight, container.getWidth() / currentWidth);
+
+	Font newFont(font.withHeight(scale * currentHeight));
+	g.setFont(newFont);
+	g.drawText(text, container, Justification::left, false);
+}
+
 //==============================================================================
 void DistortionTrialAudioProcessorEditor::paint (Graphics& g)
 {
@@ -97,20 +109,28 @@ void DistortionTrialAudioProcessorEditor::paint (Graphics& g)
 	g.setFont(30.f);
 	g.drawFittedText("Tonal Conflict", header, Justification::left, 1);
 
+	g.setFont (15.0f);
+	drawTextToFillRectangle(g, g.getCurrentFont(), "Input Gain", inputGainLabelBox);
+	drawTextToFillRectangle(g, g.getCurrentFont(), "Output Gain", outputGainLabelBox);
+	drawTextToFillRectangle(g, g.getCurrentFont(), "Dry / Wet", drywetLabelBox);
+	drawTextToFillRectangle(g, g.getCurrentFont(), "Frequency", frequencyLabelBox);
+
 	g.setColour(Colours::yellow);
 	g.fillRect(footer);
 
 	g.setColour(Colours::lightpink);
-	g.fillRect(sliderLeftCol);
+	//g.fillRect(inputGainLabelBox);
 
 	g.setColour(Colours::blue);
-	g.fillRect(sliderRightCol);
+	//g.fillRect(drywetLabelBox);
 
 	g.setColour(Colours::grey);
 	g.fillRect(visualizerBox);
 
 	
 }
+
+
 
 void DistortionTrialAudioProcessorEditor::resized()
 {
@@ -129,22 +149,36 @@ void DistortionTrialAudioProcessorEditor::resized()
 
 	const int margin = 5;
 	const int boxMin = 100;
+	const int labelSize = totalArea.getHeight() / 20;
+
 	//Slider box and visualizer width is always half of total area
 	sliderBox = Rectangle<int>(totalArea.removeFromLeft(totalArea.getWidth() / 2).reduced(margin));
 	visualizerBox = Rectangle<int>(totalArea.removeFromRight(totalArea.getWidth()).reduced(margin));
-	//sliderBox = Rectangle<int>(totalArea.removeFromLeft(jmax(boxMin, (totalArea.getWidth() / 2))).reduced(margin));
-	//visualizerBox = Rectangle<int>(totalArea.removeFromRight(jmax(boxMin, (totalArea.getWidth() / 2))).reduced(margin));
 
-	distortionTypeBox = Rectangle<int>(sliderBox.removeFromTop(sliderBox.getHeight() / 10).reduced(10));
+	distortionTypeBox = Rectangle<int>(sliderBox.removeFromTop(totalArea.getHeight() / 9).reduced(10));
 	harmonicsBox = Rectangle<int>(distortionTypeBox.removeFromRight(distortionTypeBox.getWidth() / 2));
 
+	/*Left Column*/
 	sliderLeftCol = Rectangle<int>(sliderBox.removeFromLeft(sliderBox.getWidth() / 2));
-	sliderRightCol = Rectangle<int>(sliderBox.removeFromRight(sliderBox.getWidth()));
+	inputGainBox = sliderLeftCol.removeFromTop(sliderLeftCol.getHeight() / 2).reduced(10);
+	inputGainLabelBox = inputGainBox.removeFromTop(labelSize);
+	inputGainSlider.setBounds(inputGainBox);
 
-	inputGainSlider.setBounds(sliderLeftCol.removeFromTop(sliderLeftCol.getHeight() / 2).reduced(10));
-	outputGainSlider.setBounds(sliderRightCol.removeFromTop(sliderRightCol.getHeight() / 2).reduced(10));
-    dryWetSlider.setBounds(sliderLeftCol.removeFromBottom(sliderLeftCol.getHeight()).reduced(10));
-    frequencySlider.setBounds(sliderRightCol.removeFromBottom(sliderRightCol.getHeight()).reduced(10));
+	drywetBox = Rectangle<int>(sliderLeftCol.reduced(10)); //left column has already been reduced by 2
+	drywetLabelBox = drywetBox.removeFromTop(labelSize);
+	dryWetSlider.setBounds(drywetBox);
+
+	/*Right Column*/
+	sliderRightCol = sliderBox; //sliderBox has been cut in half already
+	outputGainBox = sliderRightCol.removeFromTop(sliderRightCol.getHeight() / 2).reduced(10);
+	outputGainLabelBox = outputGainBox.removeFromTop(labelSize);
+	outputGainSlider.setBounds(outputGainBox);
+
+	frequencyBox = Rectangle<int>(sliderRightCol.reduced(10));
+	frequencyLabelBox = frequencyBox.removeFromTop(labelSize);
+    frequencySlider.setBounds(frequencyBox);
+
+
     autoFrequencyButton.setBounds(footer);
 	distortionType.setBounds(distortionTypeBox);
 	numOfHarmonics.setBounds(harmonicsBox);

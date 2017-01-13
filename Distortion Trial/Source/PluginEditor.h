@@ -44,7 +44,12 @@ private:
     ScopedPointer<ButtonAttachment> autoFrequencyAttachment;
     Slider inputGainSlider, outputGainSlider, dryWetSlider, frequencySlider;
     ToggleButton autoFrequencyButton;
-	Rectangle<int> header, footer, sliderBox, visualizerBox, sliderLeftCol, sliderRightCol, distortionTypeBox, harmonicsBox;
+	Rectangle<int> header, footer, sliderBox, visualizerBox, distortionTypeBox, harmonicsBox, sliderLeftCol, sliderRightCol;
+	Rectangle<int> inputGainBox, inputGainLabelBox, outputGainBox, outputGainLabelBox;
+	Rectangle<int> drywetBox, drywetLabelBox, frequencyBox, frequencyLabelBox;
+
+
+
 	ComboBox distortionType, numOfHarmonics;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DistortionTrialAudioProcessorEditor)
