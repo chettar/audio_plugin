@@ -17,6 +17,11 @@ public:
     {
         //setColour(Slider::textBoxBackgroundColourId, Colours::red);
     }
+
+	void drawControlPoint(Graphics &g, float x, float y, float radius, float lineThickness)
+	{
+		g.drawEllipse(x - radius, y - radius, 2.0f * radius, 2.0f * radius, lineThickness);
+	}
     
     void drawRotarySlider(Graphics& g, int x, int y, int width, int height, float sliderPos,
                           const float rotaryStartAngle, const float rotaryEndAngle, Slider& slider) override
@@ -40,47 +45,38 @@ public:
                 else
                     g.setColour(Colour(0x80808080));
                     
-                    
-                {
-                    Path filledArc;
-                    filledArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, angle, thickness);
-                    g.fillPath(filledArc);
-                }
-            /*
-             {
-             const float innerRadius = radius * 0.2f;
-             Path p;
-             p.addTriangle(-innerRadius, 0.0f,
-             0.0f, -radius * thickness * 1.1f,
-             innerRadius, 0.0f);
-             
-             p.addEllipse(-innerRadius, -innerRadius, innerRadius * 2.0f, innerRadius * 2.0f);
-             
-             g.fillPath(p, AffineTransform::rotation(angle).translated(centreX, centreY));
-             }*/
+            //Inside Arc        
+            {
+                Path filledArc;
+                filledArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, angle, thickness);
+                g.fillPath(filledArc);
+            }
+            //Inside circle
+			/*{
+				Path innerCircle;
+				innerCircle.addEllipse(rx + (radius * thickness), ry + (radius * thickness), rw*thickness, rw*thickness);
+				g.setColour(Colours::darkgrey);
+				g.fillPath(innerCircle);
+			}*/
+
+			//Inside line
+			{
+				Path p;
+				p.addRectangle(-3.f / 2, -radius, 3.f, radius);
+				g.setColour(Colours::white);
+				g.fillPath(p, AffineTransform::rotation(angle).translated(centreX, centreY));
+			}
             
             if (slider.isEnabled())
                 g.setColour(slider.findColour(Slider::rotarySliderOutlineColourId));
                 else
                     g.setColour(Colour(0x80808080));
-                /*
-                 Path outlineArc;
-                 outlineArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, thickness);
-                 outlineArc.closeSubPath();
-                 g.strokePath(outlineArc, PathStrokeType(slider.isEnabled() ? (isMouseOver ? 2.0f : 1.2f) : 0.3f));
-                 */
                     
-                    g.setColour(Colours::grey);
-                    Path insideArc;
-            insideArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, insideThickness);
-            g.fillPath(insideArc);
-            
-            
-            //insideArc.closeSubPath();
-            
-            
-            
-            
+                g.setColour(Colours::grey);
+                Path insideArc;
+				insideArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, insideThickness);
+				g.fillPath(insideArc);
+
         }
         else
         {
@@ -89,7 +85,7 @@ public:
                 else
                     g.setColour(Colour(0x80808080));
                     
-                    Path p;
+            Path p;
             p.addEllipse(-0.4f * rw, -0.4f * rw, rw * 0.8f, rw * 0.8f);
             PathStrokeType(rw * 0.1f).createStrokedPath(p, p);
             

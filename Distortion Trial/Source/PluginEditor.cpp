@@ -67,8 +67,8 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 	Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
-	int x = r.getWidth() / 4;
-	int y = r.getHeight() / 4;
+	int x = r.getWidth() / 3;
+	int y = r.getHeight() / 3;
 	setSize(x, y);
     
     // Add listener for sliders
@@ -107,7 +107,7 @@ void DistortionTrialAudioProcessorEditor::paint (Graphics& g)
 	g.setColour(Colours::deepskyblue);
 	//g.fillRect(header);
 	g.setFont(30.f);
-	g.drawFittedText("Tonal Conflict", header, Justification::left, 1);
+	drawTextToFillRectangle(g, g.getCurrentFont(), "Tonal Conflict", header);
 
 	g.setFont (15.0f);
 	drawTextToFillRectangle(g, g.getCurrentFont(), "Input Gain", inputGainLabelBox);
@@ -120,6 +120,7 @@ void DistortionTrialAudioProcessorEditor::paint (Graphics& g)
 
 	g.setColour(Colours::lightpink);
 	//g.fillRect(inputGainLabelBox);
+
 
 	g.setColour(Colours::blue);
 	//g.fillRect(drywetLabelBox);
@@ -143,7 +144,7 @@ void DistortionTrialAudioProcessorEditor::resized()
 
 	Rectangle<int> totalArea(getLocalBounds());
 
-	const int headerFooterHeight = 36;
+	const int headerFooterHeight = totalArea.getHeight() / 18;
 	header = Rectangle<int>(totalArea.removeFromTop(headerFooterHeight));
 	footer = Rectangle<int>(totalArea.removeFromBottom(headerFooterHeight));
 
@@ -155,7 +156,7 @@ void DistortionTrialAudioProcessorEditor::resized()
 	sliderBox = Rectangle<int>(totalArea.removeFromLeft(totalArea.getWidth() / 2).reduced(margin));
 	visualizerBox = Rectangle<int>(totalArea.removeFromRight(totalArea.getWidth()).reduced(margin));
 
-	distortionTypeBox = Rectangle<int>(sliderBox.removeFromTop(totalArea.getHeight() / 9).reduced(10));
+	distortionTypeBox = Rectangle<int>(sliderBox.removeFromTop(totalArea.getHeight() / 9).reduced(15));
 	harmonicsBox = Rectangle<int>(distortionTypeBox.removeFromRight(distortionTypeBox.getWidth() / 2));
 
 	/*Left Column*/
@@ -177,7 +178,6 @@ void DistortionTrialAudioProcessorEditor::resized()
 	frequencyBox = Rectangle<int>(sliderRightCol.reduced(10));
 	frequencyLabelBox = frequencyBox.removeFromTop(labelSize);
     frequencySlider.setBounds(frequencyBox);
-
 
     autoFrequencyButton.setBounds(footer);
 	distortionType.setBounds(distortionTypeBox);
