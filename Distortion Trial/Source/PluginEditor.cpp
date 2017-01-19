@@ -28,14 +28,16 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 
 	// add some sliders..
 	SliderLook* sliderLook = new SliderLook();
+	SliderLook* sliderLookMiddle = new SliderLook();
+	sliderLookMiddle->startMiddle = 1;
 
 	inputGainSlider.setSliderStyle(Slider::Rotary);
 	//inputGainSlider.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-	inputGainSlider.setLookAndFeel(sliderLook);
+	inputGainSlider.setLookAndFeel(sliderLookMiddle);
 
 	outputGainSlider.setSliderStyle(Slider::Rotary);
 	//slider2.setTextBoxStyle(Slider::NoTextBox, false, 0, 0);
-	outputGainSlider.setLookAndFeel(sliderLook);
+	outputGainSlider.setLookAndFeel(sliderLookMiddle);
     
     dryWetSlider.setSliderStyle(Slider::Rotary);
     dryWetSlider.setLookAndFeel(sliderLook);
@@ -69,7 +71,8 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
 	Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
 	int x = r.getWidth() / 3;
 	int y = r.getHeight() / 3;
-	setSize(x, y);
+	//setSize(x, y);
+	setSize(1000, 600);
     
     // Add listener for sliders
     //slider1->addListener(this);

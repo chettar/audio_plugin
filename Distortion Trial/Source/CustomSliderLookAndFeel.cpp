@@ -18,6 +18,8 @@ public:
         //setColour(Slider::textBoxBackgroundColourId, Colours::red);
     }
 
+	bool startMiddle = 0;
+
 	void drawControlPoint(Graphics &g, float x, float y, float radius, float lineThickness)
 	{
 		g.drawEllipse(x - radius, y - radius, 2.0f * radius, 2.0f * radius, lineThickness);
@@ -34,27 +36,47 @@ public:
         const float rw = radius * 2.0f;
         const float angle = rotaryStartAngle + sliderPos * (rotaryEndAngle - rotaryStartAngle);
         const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
+
+		const float innerRadius = radius * 0.7;
+		const float rx_inner = centreX - radius;
+		const float ry_inner = centreY - radius;
+		const float rw_inner = innerRadius * 2.0f;
+
         
         if (radius > 12.0f)
         {
             const float thickness = 0.7f;
             const float insideThickness = 0.96f;
+			const float lineThickness = 0.021 * width;
             
             if (slider.isEnabled())
                 g.setColour(slider.findColour(Slider::rotarySliderFillColourId).withAlpha(isMouseOver ? 1.0f : 0.9f));
                 else
                     g.setColour(Colour(0x80808080));
-                    
-            //Inside Arc        
-            {
-                Path filledArc;
-                filledArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, angle, thickness);
-                g.fillPath(filledArc);
-            }
+
+			if (startMiddle) {
+				//Inside Arc        
+				{
+					Path filledArc;
+					//filledArc.addPieSegment(rx, ry, rw, rw, (rotaryStartAngle + rotaryEndAngle / 2), angle, thickness);
+					filledArc.addPieSegment(rx, ry, rw, rw, 2*3.14159, angle, thickness);
+					g.fillPath(filledArc);
+				}
+			}
+			else {
+				//Inside Arc        
+				{
+					Path filledArc;
+					filledArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, angle, thickness);
+					g.fillPath(filledArc);
+				}
+			}
+            
             //Inside circle
-			/*{
+			/*
+			{
 				Path innerCircle;
-				innerCircle.addEllipse(rx + (radius * thickness), ry + (radius * thickness), rw*thickness, rw*thickness);
+				innerCircle.addEllipse(rx_inner, ry_inner, rw_inner, rw_inner);
 				g.setColour(Colours::darkgrey);
 				g.fillPath(innerCircle);
 			}*/
@@ -62,20 +84,31 @@ public:
 			//Inside line
 			{
 				Path p;
-				p.addRectangle(-3.f / 2, -radius, 3.f, radius);
+
+				p.addRectangle(lineThickness / 2, -radius, lineThickness, radius);
 				g.setColour(Colours::white);
 				g.fillPath(p, AffineTransform::rotation(angle).translated(centreX, centreY));
 			}
-            
-            if (slider.isEnabled())
-                g.setColour(slider.findColour(Slider::rotarySliderOutlineColourId));
-                else
-                    g.setColour(Colour(0x80808080));
-                    
-                g.setColour(Colours::grey);
-                Path insideArc;
+
+			//setting outside arc color, not used rn
+			/*
+			if (slider.isEnabled())
+				g.setColour(slider.findColour(Slider::rotarySliderOutlineColourId));
+			else
+				g.setColour(Colour(0x80808080));*/
+
+			//outside Arc
+			{
+				g.setColour(Colours::grey);
+				Path insideArc;
 				insideArc.addPieSegment(rx, ry, rw, rw, rotaryStartAngle, rotaryEndAngle, insideThickness);
 				g.fillPath(insideArc);
+			}
+
+            
+            
+                    
+                
 
         }
         else
