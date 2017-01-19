@@ -69,6 +69,7 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 	Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
+
 	int x = r.getWidth() / 3;
 	int y = r.getHeight() / 3;
 	//setSize(x, y);
