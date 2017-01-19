@@ -38,8 +38,8 @@ public:
         const bool isMouseOver = slider.isMouseOverOrDragging() && slider.isEnabled();
 
 		const float innerRadius = radius * 0.7;
-		const float rx_inner = centreX - radius;
-		const float ry_inner = centreY - radius;
+		const float rx_inner = centreX - innerRadius;
+		const float ry_inner = centreY - innerRadius;
 		const float rw_inner = innerRadius * 2.0f;
 
         
@@ -73,19 +73,19 @@ public:
 			}
             
             //Inside circle
-			/*
+			
 			{
 				Path innerCircle;
 				innerCircle.addEllipse(rx_inner, ry_inner, rw_inner, rw_inner);
-				g.setColour(Colours::darkgrey);
+				g.setColour(Colour(60, 60, 60));
 				g.fillPath(innerCircle);
-			}*/
+			}
 
 			//Inside line
 			{
 				Path p;
 
-				p.addRectangle(lineThickness / 2, -radius, lineThickness, radius);
+				p.addRectangle(lineThickness / 2, -(radius), lineThickness, radius);
 				g.setColour(Colours::white);
 				g.fillPath(p, AffineTransform::rotation(angle).translated(centreX, centreY));
 			}
