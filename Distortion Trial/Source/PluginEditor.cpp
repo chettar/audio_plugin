@@ -67,8 +67,8 @@ DistortionTrialAudioProcessorEditor::DistortionTrialAudioProcessorEditor (Distor
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
 	Rectangle<int> r = Desktop::getInstance().getDisplays().getMainDisplay().userArea;
-	int x = r.getWidth() / 4;
-	int y = r.getHeight() / 4;
+    int x = r.getWidth() / 2.4;
+    int y = r.getHeight() / 2.4;
 	setSize(x, y);
     
     // Add listener for sliders
